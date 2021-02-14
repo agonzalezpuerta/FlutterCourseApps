@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todoey/constants.dart';
 import 'package:todoey/widgets/task_tile.dart';
+import 'package:todoey/widgets/tasks_model.dart';
 
-class TaskList extends StatefulWidget {
-  final List listOfTasks;
-
-  TaskList({
-    @required this.listOfTasks,
-  });
-
-  @override
-  _TaskListState createState() => _TaskListState();
-}
-
-class _TaskListState extends State<TaskList> {
+class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final TasksModel myTasksModel = context.watch<TasksModel>();
+
     return Expanded(
       child: Container(
         alignment: Alignment.topLeft,
@@ -25,12 +18,23 @@ class _TaskListState extends State<TaskList> {
           borderRadius: kCardBorderRadius,
         ),
         child: ListView.builder(
-          itemCount: widget.listOfTasks.length,
+          itemCount: myTasksModel.getNumberOfTasks(),
           itemBuilder: (context, index) {
-            return TaskTile(
-              isChecked: widget.listOfTasks[index].taskCompletion,
-              getCheckboxState: (value) {},
-              textToDisplay: widget.listOfTasks[index].taskTitle,
+            return Dismissible(
+              key: ValueKey(index),
+              background: Container(
+                color: Colors.grey[400],
+              ),
+              onDismissed: (direction) {
+                myTasksModel.deleteTask(index);
+              },
+              child: TaskTile(
+                isChecked: myTasksModel.getTaskStatus(index),
+                getCheckboxState: (value) {
+                  myTasksModel.setTaskStatus(index, value);
+                },
+                textToDisplay: myTasksModel.getTaskText(index),
+              ),
             );
           },
         ),

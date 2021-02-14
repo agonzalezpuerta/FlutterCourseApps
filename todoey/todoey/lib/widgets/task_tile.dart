@@ -16,7 +16,10 @@ class TaskTile extends StatelessWidget {
     return ListTile(
       title: Text(
         textToDisplay,
-        style: kTaskListTextStyle,
+        style: isChecked
+            ? kTaskListTextStyle.copyWith(
+                decoration: TextDecoration.lineThrough)
+            : kTaskListTextStyle,
       ),
       trailing: Checkbox(
         value: isChecked,
