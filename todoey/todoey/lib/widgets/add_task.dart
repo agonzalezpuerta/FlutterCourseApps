@@ -1,19 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todoey/constants.dart';
 
+import 'tasks_model.dart';
+
 class AddTask extends StatelessWidget {
-  final Function getTaskText;
-  final Function saveTaskText;
-
-  AddTask({
-    @required this.getTaskText,
-    @required this.saveTaskText,
-  });
-
   @override
   Widget build(BuildContext context) {
+    final TasksModel myTasksModel = context.watch<TasksModel>();
+
     return Center(
       child: Container(
         decoration: BoxDecoration(
@@ -34,13 +31,18 @@ class AddTask extends StatelessWidget {
               style: kTaskListTextStyle,
               decoration: kAddTaskInputDecoration,
               textAlign: TextAlign.center,
-              onChanged: getTaskText,
+              onChanged: (newValue) {
+                myTasksModel.currentText = newValue;
+              },
             ),
             SizedBox(
               height: 10.0,
             ),
             FlatButton(
-              onPressed: saveTaskText,
+              onPressed: () {
+                myTasksModel.addTask();
+                Navigator.pop(context);
+              },
               padding: EdgeInsets.zero,
               child: Container(
                 height: 35.0,
